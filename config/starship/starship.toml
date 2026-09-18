@@ -1,0 +1,43 @@
+add_newline = false
+
+palette = "gruvbox_dark"
+
+format = "$hostname$directory$git_branch$git_state$git_status$cmd_duration$character"
+
+[palettes.gruvbox_dark]
+gruvbox_fg = "#ebdbb2"
+gruvbox_gray = "#928374"
+gruvbox_red = "#fb4934"
+gruvbox_green = "#b8bb26"
+gruvbox_yellow = "#fabd2f"
+gruvbox_blue = "#83a598"
+gruvbox_purple = "#d3869b"
+gruvbox_aqua = "#8ec07c"
+gruvbox_orange = "#fe8019"
+
+[hostname]
+ssh_only = true
+format = "[$hostname](bold gruvbox_orange) "
+
+[directory]
+format = "[$path](gruvbox_aqua) "
+truncation_length = 3
+truncate_to_repo = true
+
+[git_branch]
+format = "[on](gruvbox_gray) [$branch](gruvbox_purple) "
+
+[git_state]
+format = "[$state( $progress_current/$progress_total)](bold gruvbox_orange) "
+
+[git_status]
+format = "([$all_status$ahead_behind](gruvbox_yellow) )"
+
+[cmd_duration]
+min_time = 3000
+format = "[$duration](dimmed gruvbox_yellow) "
+
+[character]
+success_symbol = "[>](gruvbox_green)"
+error_symbol = "[>](gruvbox_red)"
+vimcmd_symbol = "[<](gruvbox_blue)"

@@ -1,0 +1,10 @@
+.DS_Store
+*.local
+.env
+.env.*
+*.pem
+*.key
+*.bak*
+*.backup*
+__pycache__/
+config/nvim/tmp/

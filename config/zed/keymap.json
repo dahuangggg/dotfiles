@@ -1,0 +1,38 @@
+[
+  {
+    "context": "Editor && (vim_mode == normal || vim_mode == visual) && !VimWaiting && !menu",
+    "bindings": {
+      "shift-j": [
+        "workspace::SendKeystrokes",
+        "5 j"
+      ],
+      "shift-k": [
+        "workspace::SendKeystrokes",
+        "5 k"
+      ],
+      "shift-h": [
+        "workspace::SendKeystrokes",
+        "^"
+      ],
+      "shift-l": [
+        "workspace::SendKeystrokes",
+        "g _"
+      ]
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal && !VimWaiting && !menu",
+    "bindings": {
+      "space enter": [
+        "workspace::SendKeystrokes",
+        ": n o h enter"
+      ],
+      "space w": "workspace::Save",
+      "space q": "pane::CloseActiveItem",
+      "space b": "project_panel::ToggleFocus",
+      "space o": "outline::Toggle",
+      "ctrl-p": "file_finder::Toggle",
+      "ctrl-f": "pane::DeploySearch"
+    }
+  }
+]

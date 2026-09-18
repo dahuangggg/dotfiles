@@ -1,0 +1,47 @@
+# dotfiles
+
+Personal macOS configuration for Zsh, Yazi, Ghostty, Zed, Starship, Neovim and Kitty.
+
+## Install
+
+Install Homebrew first, then clone this repository and run:
+
+```sh
+git clone https://github.com/dahuangggg/dotfiles.git
+cd dotfiles
+brew bundle --file Brewfile
+python3 install.py
+python3 install.py --apply
+```
+
+The first installer command previews changes. The second copies configuration files and backs up replaced files under `~/.local/state/dotfiles/backups/<timestamp>/`, preserving their relative paths. Identical files are skipped. Unrelated files are left in place. Symlinked destination directories are rejected; resolve these manually before installing. Quit editors and terminals before applying, then reopen them.
+
+To install only some applications:
+
+```sh
+python3 install.py --only zsh starship ghostty
+python3 install.py --apply --only zsh starship ghostty
+```
+
+To restore a replaced file, copy its matching file from the printed backup directory to its original path. Files newly created by the installer have no backup; remove them individually if needed.
+
+## Agent setup checklist
+
+1. Inspect the OS and existing configuration. This bundle targets macOS and `~/.config`; custom XDG directories and Linux require adaptation. Do not assume the original user's paths exist.
+2. Review `Brewfile`, install dependencies, and preview `install.py`. Apply only the requested applications. Never run package-manager cleanup.
+3. Start an interactive Zsh. Its plugin loader downloads four plugins from GitHub on first use. Starship, fzf, bat, fd, lsd and zoxide provide the shell integrations. Proxy helpers are manual and assume local ports 6152/6153; adjust them for the destination machine.
+4. Start Neovim and allow lazy.nvim and Mason to install plugins and language tools. The committed `lazy-lock.json` records plugin revisions; use `:Lazy restore` to restore them. Run `:checkhealth`. Java tooling requires JDK 21. Copilot requires a separate `:Copilot setup` login.
+5. Yazi flavors are included with their licenses. Test navigation, `y` in Zsh, and file previews. Its custom Lua layout depends on Yazi APIs and should be checked after upgrades.
+6. Open Zed and verify fonts, Java and extensions. Personal SSH connections, custom model endpoints and Agent server definitions must be configured separately. Account-backed AI features require login.
+7. Verify Ghostty and Kitty appearance. Monaco is supplied by macOS; JetBrains Mono Nerd Font supplies icons. Check for an existing Ghostty config under `~/Library/Application Support/com.mitchellh.ghostty/` that may override these settings; review it before changing it.
+
+## Layout
+
+- `home/`: Zsh startup files.
+- `config/`: the seven selected application configurations; Neovim uses the active `nvim` configuration.
+- `Brewfile`: applications and CLI dependencies, without importing additional application configurations.
+- `install.py`: preview, selective installation and backups.
+
+Keep credentials and machine-specific shell functions in `~/.zshrc.local` or `~/.zprofile.local`. The installer does not create or upload these files. Optional integrations activate only when their local files or commands exist. Personal Java/Ruby project wrappers can be added to the local file as needed.
+
+Application settings preserve the original preferences, including Zed's workspace trust setting; review them for the destination environment. Third-party Yazi themes retain their own licenses.
