@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal macOS configuration for Zsh, Yazi, Ghostty, Zed, Starship, Neovim and Kitty.
+Personal macOS configuration for Zsh, Yazi, Ghostty, Zed, Starship, Neovim, Kitty and Rime (Squirrel).
 
 ## Install
 
@@ -38,10 +38,26 @@ To restore a replaced file, copy its matching file from the printed backup direc
 ## Layout
 
 - `home/`: Zsh startup files.
-- `config/`: the seven selected application configurations; Neovim uses the active `nvim` configuration.
+- `config/`: the eight selected application configurations; Neovim uses the active `nvim` configuration.
 - `Brewfile`: applications and CLI dependencies, without importing additional application configurations.
 - `install.py`: preview, selective installation and backups.
 
 Keep credentials and machine-specific shell functions in `~/.zshrc.local` or `~/.zprofile.local`. The installer does not create or upload these files. Optional integrations activate only when their local files or commands exist. Personal Java/Ruby project wrappers can be added to the local file as needed.
 
 Application settings preserve the original preferences, including Zed's workspace trust setting; review them for the destination environment. Third-party Yazi themes retain their own licenses.
+
+## Rime / Squirrel
+
+The Rime bundle contains the local Rime Ice schemas, public dictionaries, Lua modules, OpenCC data and Squirrel appearance/key preferences. Its upstream license is retained in `config/rime/LICENSE`.
+
+```sh
+brew install --cask squirrel
+python3 install.py --only rime
+python3 install.py --apply --only rime
+```
+
+Rime files are installed into `~/Library/Rime/`. Add or enable Squirrel in macOS Input Sources (log out and back in if macOS requests it), select it, then choose Deploy / 重新部署 from the input menu. Select Rime Ice / 雾凇拼音 in the schema menu. Verify Chinese input, six candidates per page, Shift behavior and light/dark appearance.
+
+Personal phrase files, learned user dictionaries, sync data, installation IDs, build outputs and backups are excluded. Existing personal files on the destination are preserved. The three cold-word preference tables ship empty and are only installed if missing; they can accumulate personal word preferences, so do not copy them back into a public repository. Create `custom_phrase.txt`, `custom_phrase_double.txt` or `custom_phrase_t9.txt` locally if you want custom phrases.
+
+The installer does not trigger deployment or modify macOS input sources automatically. On Linux, adapt the destination directory and omit Squirrel-specific settings.

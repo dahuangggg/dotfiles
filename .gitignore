@@ -8,3 +8,14 @@
 *.backup*
 __pycache__/
 config/nvim/tmp/
+
+# Rime private and generated state
+config/rime/build/
+config/rime/sync/
+config/rime/.backup/
+config/rime/*.userdb/
+config/rime/*.userdb*
+config/rime/installation.yaml
+config/rime/user.yaml
+config/rime/custom_phrase*.txt
+config/rime/*.log

@@ -6,7 +6,7 @@ from pathlib import Path
 import shutil
 
 ROOT = Path(__file__).resolve().parent
-APPS = ('zsh', 'yazi', 'ghostty', 'zed', 'starship', 'nvim', 'kitty')
+APPS = ('zsh', 'yazi', 'ghostty', 'zed', 'starship', 'nvim', 'kitty', 'rime')
 p = argparse.ArgumentParser(description=__doc__)
 p.add_argument('--apply', action='store_true', help='write files (default: preview)')
 p.add_argument('--target', type=Path, default=Path.home(), help='destination home directory')
@@ -18,7 +18,16 @@ files = []
 for app in a.only:
     for src in sorted((ROOT / 'config' / app).rglob('*')):
         if src.is_file():
-            files.append((src, home / '.config' / app / src.relative_to(ROOT / 'config' / app)))
+            destination = home / 'Library/Rime' if app == 'rime' else home / '.config' / app
+            relative = src.relative_to(ROOT / 'config' / app)
+            # Rime can write personal word preferences into these Lua tables.
+            if app == 'rime' and relative.as_posix() in {
+                'lua/cold_word_drop/reduce_freq_words.lua',
+                'lua/cold_word_drop/drop_words.lua',
+                'lua/cold_word_drop/hide_words.lua',
+            } and (destination / relative).exists():
+                continue
+            files.append((src, destination / relative))
 if 'zsh' in a.only:
     files += [(src, home / src.name) for src in sorted((ROOT / 'home').iterdir()) if src.is_file()]
 # Refuse symlinked parent directories rather than writing outside the target home.
@@ -42,5 +51,7 @@ for src, dst in files:
         shutil.copy2(src, dst)
 if a.apply:
     print(f'Complete. Backups, if needed: {backup}')
+    if 'rime' in a.only:
+        print('Rime: select Squirrel in macOS Input Sources and run Deploy from its menu.')
 else:
     print('Preview only. Add --apply to install.')
