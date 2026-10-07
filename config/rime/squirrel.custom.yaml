@@ -8,19 +8,19 @@
 patch:
   app_options:
     com.microsoft.VSCode:
-      ascii_mode: true
+      ascii_mode: false
       ascii_punct: true
     com.cursor.Cursor:
-      ascii_mode: true
+      ascii_mode: false
       ascii_punct: true
     com.jetbrains.intellij:
-      ascii_mode: true
+      ascii_mode: false
       ascii_punct: true
     com.googlecode.iterm2:
-      ascii_mode: true
+      ascii_mode: false
       ascii_punct: true
     com.apple.Terminal:
-      ascii_mode: true
+      ascii_mode: false
       ascii_punct: true
     md.obsidian:
       ascii_punct: true
