@@ -1,63 +1,131 @@
 # dotfiles
 
-Personal macOS configuration for Zsh, Yazi, Ghostty, Zed, Starship, Neovim, Kitty and Rime (Squirrel).
+[中文](#中文) | [English](#english)
 
-## Install
+---
 
-Install Homebrew first, then clone this repository and run:
+## 中文
+
+个人 macOS 配置文件集合，涵盖 Zsh、Yazi、Ghostty、Zed、Starship、Neovim、Kitty 和 Rime（鼠须管），附带可预览、可选择、自动备份的安装脚本。
+
+### 状态
+
+早期项目，不再维护。
+
+### 功能
+
+- `install.py`：默认仅预览变更；`--apply` 才写入文件，被替换的文件备份到 `~/.local/state/dotfiles/backups/<timestamp>/`；相同文件跳过；拒绝符号链接的目标目录。
+- `--only` 只安装部分应用（`zsh yazi ghostty zed starship nvim kitty rime`），`--target` 指定目标 home 目录。
+- Zsh：模块化配置（别名、函数、vi 模式按键、fzf 搜索、插件加载、Starship 提示符），首次启动从 GitHub 拉取 4 个插件；Yazi `y` 包装函数；手动代理开关（默认端口 6152/6153）。
+- Neovim：lazy.nvim 插件管理（`lazy-lock.json` 锁定版本），LSP（lua_ls、clangd、jdtls、pyright）、补全、格式化、调试、Copilot 等；速查见 `config/nvim/README.md`。
+- Yazi：自定义 Lua 布局，内置 catppuccin-mocha、kanagawa、gruvbox-dark 主题（保留各自许可证）。
+- Rime / 鼠须管：雾凇拼音方案、多种双拼与 T9 方案、公开词库、Lua 扩展、OpenCC 数据和外观/按键设置；不包含个人词库与同步数据。
+- Ghostty、Kitty、Zed、Starship 的外观和快捷键配置。
+- 机器相关配置和凭据放在 `~/.zshrc.local` / `~/.zprofile.local`，不纳入仓库。
+
+### 技术栈
+
+Zsh、Lua（Neovim / Yazi / Rime）、YAML（Rime）、TOML（Starship / Yazi）、JSON（Zed）、Python 3（安装脚本）、Homebrew（`Brewfile`）。目标平台为 macOS。
+
+### 快速开始
+
+先安装 Homebrew，然后：
 
 ```sh
 git clone https://github.com/dahuangggg/dotfiles.git
 cd dotfiles
 brew bundle --file Brewfile
-python3 install.py
-python3 install.py --apply
+python3 install.py            # 预览
+python3 install.py --apply    # 写入并备份
 ```
 
-The first installer command previews changes. The second copies configuration files and backs up replaced files under `~/.local/state/dotfiles/backups/<timestamp>/`, preserving their relative paths. Identical files are skipped. Unrelated files are left in place. Symlinked destination directories are rejected; resolve these manually before installing. Quit editors and terminals before applying, then reopen them.
-
-To install only some applications:
+只安装部分应用：
 
 ```sh
 python3 install.py --only zsh starship ghostty
 python3 install.py --apply --only zsh starship ghostty
 ```
 
-To restore a replaced file, copy its matching file from the printed backup directory to its original path. Files newly created by the installer have no backup; remove them individually if needed.
+Rime：`brew install --cask squirrel` 后执行 `python3 install.py --apply --only rime`（安装到 `~/Library/Rime/`），在 macOS 输入法中启用鼠须管，选择「重新部署」，再选择「雾凇拼音」方案。安装脚本不会自动部署，也不会修改系统输入源。
 
-## Agent setup checklist
+Neovim 首次启动会通过 lazy.nvim 和 Mason 安装插件与语言工具（`:Lazy restore` 按锁文件恢复）；Java 需要 JDK 21，Copilot 需要单独执行 `:Copilot setup`。
 
-1. Inspect the OS and existing configuration. This bundle targets macOS and `~/.config`; custom XDG directories and Linux require adaptation. Do not assume the original user's paths exist.
-2. Review `Brewfile`, install dependencies, and preview `install.py`. Apply only the requested applications. Never run package-manager cleanup.
-3. Start an interactive Zsh. Its plugin loader downloads four plugins from GitHub on first use. Starship, fzf, bat, fd, lsd and zoxide provide the shell integrations. Proxy helpers are manual and assume local ports 6152/6153; adjust them for the destination machine.
-4. Start Neovim and allow lazy.nvim and Mason to install plugins and language tools. The committed `lazy-lock.json` records plugin revisions; use `:Lazy restore` to restore them. Run `:checkhealth`. Java tooling requires JDK 21. Copilot requires a separate `:Copilot setup` login.
-5. Yazi flavors are included with their licenses. Test navigation, `y` in Zsh, and file previews. Its custom Lua layout depends on Yazi APIs and should be checked after upgrades.
-6. Open Zed and verify fonts, Java and extensions. Personal SSH connections, custom model endpoints and Agent server definitions must be configured separately. Account-backed AI features require login.
-7. Verify Ghostty and Kitty appearance. Monaco is supplied by macOS; JetBrains Mono Nerd Font supplies icons. Check for an existing Ghostty config under `~/Library/Application Support/com.mitchellh.ghostty/` that may override these settings; review it before changing it.
+恢复：将打印出的备份目录中的对应文件复制回原路径即可。
 
-## Layout
+### 目录结构
 
-- `home/`: Zsh startup files.
-- `config/`: the eight selected application configurations; Neovim uses the active `nvim` configuration.
-- `Brewfile`: applications and CLI dependencies, without importing additional application configurations.
-- `install.py`: preview, selective installation and backups.
-
-Keep credentials and machine-specific shell functions in `~/.zshrc.local` or `~/.zprofile.local`. The installer does not create or upload these files. Optional integrations activate only when their local files or commands exist. Personal Java/Ruby project wrappers can be added to the local file as needed.
-
-Application settings preserve the original preferences, including Zed's workspace trust setting; review them for the destination environment. Third-party Yazi themes retain their own licenses.
-
-## Rime / Squirrel
-
-The Rime bundle contains the local Rime Ice schemas, public dictionaries, Lua modules, OpenCC data and Squirrel appearance/key preferences. Its upstream license is retained in `config/rime/LICENSE`.
-
-```sh
-brew install --cask squirrel
-python3 install.py --only rime
-python3 install.py --apply --only rime
+```text
+.
+├── Brewfile      # Homebrew 应用与命令行依赖
+├── install.py    # 预览 / 选择性安装 / 备份
+├── home/         # .zshrc、.zprofile、.zshenv
+└── config/       # zsh、nvim、yazi、ghostty、zed、starship、kitty、rime
 ```
 
-Rime files are installed into `~/Library/Rime/`. Add or enable Squirrel in macOS Input Sources (log out and back in if macOS requests it), select it, then choose Deploy / 重新部署 from the input menu. Select Rime Ice / 雾凇拼音 in the schema menu. Verify Chinese input, six candidates per page, Shift behavior and light/dark appearance.
+### 许可证
 
-Personal phrase files, learned user dictionaries, sync data, installation IDs, build outputs and backups are excluded. Existing personal files on the destination are preserved. The three cold-word preference tables ship empty and are only installed if missing; they can accumulate personal word preferences, so do not copy them back into a public repository. Create `custom_phrase.txt`, `custom_phrase_double.txt` or `custom_phrase_t9.txt` locally if you want custom phrases.
+仓库根目录未提供许可证。Rime 配置保留上游许可证 `config/rime/LICENSE`，Yazi 主题保留各自目录下的许可证。
 
-The installer does not trigger deployment or modify macOS input sources automatically. On Linux, adapt the destination directory and omit Squirrel-specific settings.
+---
+
+## English
+
+Personal macOS configuration for Zsh, Yazi, Ghostty, Zed, Starship, Neovim, Kitty and Rime (Squirrel), with an installer that previews changes, installs selectively and backs up replaced files.
+
+### Status
+
+Early project, no longer actively maintained.
+
+### Features
+
+- `install.py`: previews by default; `--apply` writes files and backs up replaced ones under `~/.local/state/dotfiles/backups/<timestamp>/`. Identical files are skipped; symlinked destination directories are rejected.
+- `--only` installs a subset (`zsh yazi ghostty zed starship nvim kitty rime`); `--target` sets the destination home directory.
+- Zsh: modular config (aliases, functions, vi-mode bindings, fzf search, plugin loader, Starship prompt). Four plugins are cloned from GitHub on first start. Includes the Yazi `y` wrapper and manual proxy helpers (ports 6152/6153 by default).
+- Neovim: lazy.nvim with a committed `lazy-lock.json`; LSP (lua_ls, clangd, jdtls, pyright), completion, formatting, debugging, Copilot. Cheat sheet in `config/nvim/README.md`.
+- Yazi: custom Lua layout plus catppuccin-mocha, kanagawa and gruvbox-dark flavors (with their licenses).
+- Rime / Squirrel: Rime Ice schemas, double-pinyin and T9 variants, public dictionaries, Lua modules, OpenCC data and Squirrel appearance/key settings. Personal dictionaries and sync data are excluded.
+- Appearance and keybindings for Ghostty, Kitty, Zed and Starship.
+- Machine-specific settings and credentials belong in `~/.zshrc.local` / `~/.zprofile.local`, outside the repo.
+
+### Tech stack
+
+Zsh, Lua (Neovim / Yazi / Rime), YAML (Rime), TOML (Starship / Yazi), JSON (Zed), Python 3 (installer), Homebrew (`Brewfile`). Targets macOS.
+
+### Getting started
+
+Install Homebrew first, then:
+
+```sh
+git clone https://github.com/dahuangggg/dotfiles.git
+cd dotfiles
+brew bundle --file Brewfile
+python3 install.py            # preview
+python3 install.py --apply    # write and back up
+```
+
+Install only some applications:
+
+```sh
+python3 install.py --only zsh starship ghostty
+python3 install.py --apply --only zsh starship ghostty
+```
+
+Rime: `brew install --cask squirrel`, then `python3 install.py --apply --only rime` (installs into `~/Library/Rime/`). Enable Squirrel in macOS Input Sources, choose Deploy from its menu, and select Rime Ice (雾凇拼音). The installer does not deploy Rime or change input sources.
+
+On first launch Neovim installs plugins and language tools via lazy.nvim and Mason (`:Lazy restore` restores locked revisions). Java tooling needs JDK 21; Copilot needs `:Copilot setup`.
+
+To restore a replaced file, copy it back from the printed backup directory.
+
+### Directory structure
+
+```text
+.
+├── Brewfile      # Homebrew apps and CLI dependencies
+├── install.py    # preview / selective install / backups
+├── home/         # .zshrc, .zprofile, .zshenv
+└── config/       # zsh, nvim, yazi, ghostty, zed, starship, kitty, rime
+```
+
+### License
+
+No top-level license. The Rime bundle keeps its upstream license in `config/rime/LICENSE`; Yazi flavors keep their own licenses.
